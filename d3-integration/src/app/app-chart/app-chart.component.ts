@@ -7,7 +7,7 @@ const data = {
           "Client Name": "BCBSMA",
           "Client Description": "xxx",
           "Project Name": "BCBSMA-I",
-          "Project Status ": "Completed",
+          "Project Status": "Completed",
           "Total EBS Consulting Hours": "500",
           "Project Manager Name": "X1",
           "Team Count": "10",
@@ -20,7 +20,7 @@ const data = {
           "Client Name": "BCBSMA",
           "Client Description": "xxx",
           "Project Name": "BCBSMA-II",
-          "Project Status ": "Ongoing",
+          "Project Status": "Ongoing",
           "Total EBS Consulting Hours": "223",
           "Project Manager Name": "Y1",
           "Team Count": "4",
@@ -33,7 +33,7 @@ const data = {
           "Client Name": "BCBSMA",
           "Client Description": "xxx",
           "Project Name": "BCBSMA-III",
-          "Project Status ": "Yet to begin",
+          "Project Status": "Yet to begin",
           "Total EBS Consulting Hours": "456",
           "Project Manager Name": "Z1",
           "Team Count": "12",
@@ -46,7 +46,7 @@ const data = {
           "Client Name": "BCBSMA",
           "Client Description": "xxx",
           "Project Name": "BCBSMA-IV",
-          "Project Status ": "Completed",
+          "Project Status": "Completed",
           "Total EBS Consulting Hours": "123",
           "Project Manager Name": "A1",
           "Team Count": "9",
@@ -59,7 +59,7 @@ const data = {
           "Client Name": "ADI",
           "Client Description": "khdfkjasfkd asfkjsahd kjasdh",
           "Project Name": "ADI",
-          "Project Status ": "Ongoing",
+          "Project Status": "Ongoing",
           "Total EBS Consulting Hours": "645",
           "Project Manager Name": "B1",
           "Team Count": "5",
@@ -72,7 +72,7 @@ const data = {
           "Client Name": "AAAA",
           "Client Description": "kjsdnfkjdsf mbfdkjsab",
           "Project Name": "AAAA",
-          "Project Status ": "Completed",
+          "Project Status": "Completed",
           "Total EBS Consulting Hours": "762",
           "Project Manager Name": "C1",
           "Team Count": "6",
@@ -85,7 +85,7 @@ const data = {
           "Client Name": "BBBB",
           "Client Description": "adsbsa ",
           "Project Name": "BBBB",
-          "Project Status ": "Ongoing",
+          "Project Status": "Ongoing",
           "Total EBS Consulting Hours": "234",
           "Project Manager Name": "X1",
           "Team Count": "8",
@@ -98,7 +98,7 @@ const data = {
           "Client Name": "CCCC",
           "Client Description": "oitfyodfgknfd",
           "Project Name": "CCCC",
-          "Project Status ": "Yet to begin",
+          "Project Status": "Yet to begin",
           "Total EBS Consulting Hours": "125",
           "Project Manager Name": "Y1",
           "Team Count": "7",
@@ -111,7 +111,7 @@ const data = {
           "Client Name": "DDDD",
           "Client Description": "mnzxbcagd",
           "Project Name": "DDDD",
-          "Project Status ": "Completed",
+          "Project Status": "Completed",
           "Total EBS Consulting Hours": "983",
           "Project Manager Name": "Z1",
           "Team Count": "3",
@@ -124,7 +124,7 @@ const data = {
           "Client Name": "EEEE",
           "Client Description": "iuweyruiwe",
           "Project Name": "EEEE",
-          "Project Status ": "Ongoing",
+          "Project Status": "Ongoing",
           "Total EBS Consulting Hours": "672",
           "Project Manager Name": "A1",
           "Team Count": "11",
@@ -155,24 +155,28 @@ export class AppChartComponent implements OnInit {
         'Team Count': +d['Team Count'],
         'Total EBS Consulting Hours': +d['Total EBS Consulting Hours'],
         'Project Start Date': new Date(d['Project Start Date']),
-        'Project End Date': new Date(d['Project End Date']),
-        'Team Members': d['Team Members'].split(',').length
+        'Project End Date': new Date(d['Project End Date'])
       }
     });
-    this.yAxisOptions.push('Team Count', 'Total EBS Consulting Hours', 'Team Members')
-    this.buildGraph(this.data);
+    this.yAxisOptions.push('Team Count', 'Total EBS Consulting Hours');
+    this.buildGraph(this.yAxisOptions[0]);
   }
 
-  buildGraph(graphData: any) {
+  handleYAxisChange(event) {
+    this.updateGraph(event.target.value)
+  }
+  buildGraph(yAxisPoint) {
     const svg = select('svg');
     const TITLE = "PROJECTS COE"
     const WIDTH = +svg.attr('width');
     const HEIGHT = +svg.attr('height');
-    const MARGIN = { top: 20, right: 20, bottom: 20, left: 70 };
+    const MARGIN = { top: 20, right: 20, bottom: 60, left: 70 };
     const INNER_WIDTH = WIDTH - MARGIN.left - MARGIN.right;
     const INNER_HEIGHT = HEIGHT - MARGIN.top - MARGIN.bottom;
-    const xValue = d => d["Project Name"];
-    const yValue = d => +d["Team Count"];
+    const xAXIS_LABEL = "Project Name";
+    const yAXIS_LABEL = yAxisPoint;
+    const xValue = d => d[xAXIS_LABEL];
+    const yValue = d => +d[yAxisPoint];
 
     const xScale = scaleBand()
     .domain(this.data.map(xValue))
@@ -188,12 +192,87 @@ export class AppChartComponent implements OnInit {
     const g = svg.append('g')
       .attr('transform', `translate(${MARGIN.left},${MARGIN.top})`);
 
-    g.append('g').call(yAxis)
-    g.append('g').call(xAxis)
+    const yAxisGroup = g.append('g').attr('class', 'y-axis').call(yAxis);
+    yAxisGroup.append('text')
+    .attr("transform", 'rotate(-90)')
+    .text(yAXIS_LABEL)
+    .attr('class', 'y-axis-label')
+    .attr('fill','#000')
+    .attr('text-anchor', 'middle')
+    .attr('x', -INNER_HEIGHT/2)
+    .attr('y', -40)
+
+    const xAxisGroup = g.append('g').call(xAxis)
     .attr('transform', `translate(0, ${INNER_HEIGHT})`);
+
+      xAxisGroup.append('text')
+      .text(xAXIS_LABEL)
+      .attr('class', 'x-axis-label')
+      .attr('fill','#000')
+      .attr('x', INNER_WIDTH/2)
+      .attr('y', MARGIN.bottom - 10)
 
     g.selectAll('rect').data(this.data)
       .enter().append('rect')
+      .attr('width', xScale.bandwidth())
+      .attr('fill', d => {
+        console.log(d, d["Project Status"])
+        switch(d['Project Status']) {
+          case 'Completed':
+            return '#5C8100';
+          case 'Ongoing':
+            return '#A0B700';
+          case 'Yet to begin':
+            return '#978F80';
+          default:
+            return '#978F80'
+
+        }
+      })
+      .attr('height', d => INNER_HEIGHT- yScale(yValue(d)))
+      .attr('y', d => yScale(yValue(d)))
+      .attr('x', d => xScale(xValue(d)))
+  }
+  updateGraph(yAxisPoint) {
+    const svg = select('svg');
+    const TITLE = "PROJECTS COE"
+    const WIDTH = +svg.attr('width');
+    const HEIGHT = +svg.attr('height');
+    const MARGIN = { top: 20, right: 20, bottom: 60, left: 70 };
+    const INNER_WIDTH = WIDTH - MARGIN.left - MARGIN.right;
+    const INNER_HEIGHT = HEIGHT - MARGIN.top - MARGIN.bottom;
+    const xAXIS_LABEL = "Project Name";
+    const yAXIS_LABEL = yAxisPoint;
+    const xValue = d => d[xAXIS_LABEL];
+    const yValue = d => +d[yAxisPoint];
+
+    const xScale = scaleBand()
+    .domain(this.data.map(xValue))
+    .range([0, INNER_WIDTH])
+    .padding(0.1)
+
+    const yScale = scaleLinear()
+    .domain([0 ,max(this.data, yValue)])
+    .range([INNER_HEIGHT, 0])
+
+    const yAxis = axisLeft(yScale);
+    // const xAxis = axisBottom(xScale);
+    // const g = svg.append('g')
+    //   .attr('transform', `translate(${MARGIN.left},${MARGIN.top})`);
+
+    svg.select('g.y-axis')
+      .transition()
+      .delay(500)
+        .call(yAxis)
+
+    svg.select('.y-axis-label')
+      .transition()
+      .delay(500)
+        .text(yAXIS_LABEL)
+
+    svg.selectAll('rect').data(this.data)
+      .transition()
+      .delay(500)
       .attr('width', xScale.bandwidth())
       .attr('height', d => INNER_HEIGHT- yScale(yValue(d)))
       .attr('y', d => yScale(yValue(d)))

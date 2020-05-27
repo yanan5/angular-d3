@@ -1,1 +1,6 @@
+<div>
+  <select (change)="handleYAxisChange($event)">
+    <option *ngFor="let yAxisOption of yAxisOptions">{{yAxisOption}}</option>
+  </select>
+</div>
 <svg width="960" height="500"></svg>
