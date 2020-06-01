@@ -3,10 +3,21 @@ body {
   overflow-x: hidden;
   padding: 0;
 }
-rect {
-  fill: steelblue;
-}
-
-text {
-  font-size: 1.4em;
+:host {
+  ::ng-deep {
+    h3 {
+      font-style: italic;
+    }
+    rect {
+      fill: steelblue;
+    }
+    #bar-chart {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    text {
+      font-size: 1.4em;
+    }
+  }
 }

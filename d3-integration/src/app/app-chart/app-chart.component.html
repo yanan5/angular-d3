@@ -1,6 +1,6 @@
-<div>
+<div id="bar-chart">
   <select (change)="handleYAxisChange($event)">
     <option *ngFor="let yAxisOption of yAxisOptions">{{yAxisOption}}</option>
   </select>
+  <svg width="100%" height="500"></svg>
 </div>
-<svg width="960" height="500"></svg>
